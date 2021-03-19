@@ -23,6 +23,7 @@ namespace Crypto_1_Cezar
     /// </summary>
     public partial class MainWindow : Window
     {
+
         //змінна зберігає чи зашифрувати зараз текст чи дешефрувати (якщо true зашифрувати), можливо не найкраще рішення використовувати bool
         bool lastActEncript = true;
         Brush defoltButtColor;

@@ -6,16 +6,13 @@ using System.Text;
 
 namespace Crypto_1_Cezar
 {
-    public static class Caesars_code
+    public class Caesars_code : Cypher
     {
-        public static string alfabetEn = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ,.!?()";
-        public static string alfabetUa = "абвгдеєжзиіїйклмнопрстуфхцчшщьюяФБВГДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ0123456789_ ,.!?()";
-        public static int lenOfDev = 65536;
         public static bool IsValidKey(string key)
         {
             return int.TryParse(key, out int a);
         }
-        public static string Encrypt(string input, int key, int lang)
+        public override string Encrypt(string input, int key, int lang)
         {
             if (input.Length == 0)
                 return string.Empty;
@@ -49,10 +46,10 @@ namespace Crypto_1_Cezar
                 else
                     result += sym;
             }
-
+       
             return result;
         }
-        public static string Decrypt(string input, int key, int lang)
+        public override string Decrypt(string input, int key, int lang)
         {
             if (input.Length == 0)
                 return string.Empty;
@@ -92,7 +89,7 @@ namespace Crypto_1_Cezar
 
             return result;
         }
-        public static string BroutForseManual(string input, int lang)
+        public string BroutForseManual(string input, int lang)
         {
             string result = string.Empty;
 
@@ -113,7 +110,7 @@ namespace Crypto_1_Cezar
 
             return result;
         }
-        static int BinarySearch(string[] array, string searchedValue, int left, int right)
+        private int BinarySearch(string[] array, string searchedValue, int left, int right)
         {
             while (left <= right)
             {
@@ -130,7 +127,7 @@ namespace Crypto_1_Cezar
             }
             return -1;
         }
-        public static string BroutForseAuto(string input, out int key, int lang)
+        public string BroutForseAuto(string input, out int key, int lang)
         {
             string[] dict;
             int bestKey = 0;
@@ -163,7 +160,7 @@ namespace Crypto_1_Cezar
             key = bestKey;
             return Decrypt(input, key, lang);
         }
-        public static string GetFrequency(string input)
+        public string GetFrequency(string input)
         {
             Dictionary<char, int> frequencies = new Dictionary<char, int>();
             foreach (var item in input)
@@ -191,7 +188,7 @@ namespace Crypto_1_Cezar
             }
             return resK + '\n' + resV;
         }
-        private static char MostCommonSymbol(string input)
+        private char MostCommonSymbol(string input)
         {
             if (input.Length == 0)
                 throw new ArgumentNullException();
@@ -214,7 +211,7 @@ namespace Crypto_1_Cezar
             }
             return rez;
         }
-        public static int HackByFreguency(string input, int lang)
+        public int HackByFreguency(string input, int lang)
         {
             if (input.Length == 0)
                 return 0;// повертаю нульовий ключ
@@ -244,5 +241,6 @@ namespace Crypto_1_Cezar
             else
                 return 0;
         }
+
     }
 }
