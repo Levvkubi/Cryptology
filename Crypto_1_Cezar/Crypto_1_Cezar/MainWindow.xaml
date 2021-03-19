@@ -1,0 +1,207 @@
+﻿<Window x:Class="Crypto_1_Cezar.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Crypto_1_Cezar"
+        mc:Ignorable="d"
+        Title="MainWindow" MinHeight="450" MinWidth="800" Height="450" Width="800"
+        Background="#2d2d30">
+    <Window.Resources>
+        <SolidColorBrush Color="#e6e6e6" x:Key="TextColor"/>
+        <SolidColorBrush Color="#1e1e1e" x:Key="FieldBlackColor"/>
+        <SolidColorBrush Color="#2d2d30" x:Key="MainBlackColor"/>
+        <Style TargetType="TextBox" x:Key="Defolt">
+            <Setter Property="Background" Value="{StaticResource FieldBlackColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource Defolt}"/>
+        <Style TargetType="TextBox" x:Key="BigField" BasedOn="{StaticResource Defolt}">
+            <Setter Property="Margin" Value="10,5,10,10"/>
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+
+        </Style>
+        <Style TargetType="TextBox" x:Key="SmallField" BasedOn="{StaticResource Defolt}">
+            <Setter Property="Margin" Value="10,5,10,10"/>
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+        </Style>
+        <Style TargetType="{x:Type MenuItem}" x:Key="DefoltMenuItem">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Background" Value="{StaticResource FieldBlackColor}"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#2d2d30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ToolBar Height="35" 
+                 VerticalAlignment="top"
+                 Background="#2d2d30">
+            <Menu  
+                  Background="{StaticResource MainBlackColor}">
+                <!--чомусь коли я роблю цей стиль без ключа щоб він застосовувася до всіх менюітем він не застосовується-->
+                <MenuItem Header="File"
+                          Background="{StaticResource MainBlackColor}"
+                          Style="{StaticResource DefoltMenuItem}">
+
+                    <MenuItem
+                        Header="Open" 
+                        Click="OpenFile"
+                        Style="{StaticResource DefoltMenuItem}"/>
+
+                    <MenuItem
+                        x:Name="SaveButton"
+                        Header="Save" 
+                        Click="SaveFile"
+                        IsEnabled="False"
+                        Style="{StaticResource DefoltMenuItem}"/>
+
+                    <MenuItem 
+                        Header="Save As"
+                        Click="SaveAs"
+                        Style="{StaticResource DefoltMenuItem}"
+                        />
+                </MenuItem>
+                <MenuItem Header="Hack Tools"
+                          Background="{StaticResource MainBlackColor}"
+                          Style="{StaticResource DefoltMenuItem}">
+                    <MenuItem Header="Bruet Forse"
+                              Style="{StaticResource DefoltMenuItem}">
+                        <MenuItem
+                            Header="Auto" 
+                            Click="BruetForseAuto"
+                            Style="{StaticResource DefoltMenuItem}"/>
+                        <MenuItem
+                            Header="Manually"
+                            Click="BruetForseManualy"
+                            Style="{StaticResource DefoltMenuItem}"/>
+                    </MenuItem>
+                    <MenuItem
+                        Header="Freguency Hack" 
+                        Click="HackByFreguency"
+                        Style="{StaticResource DefoltMenuItem}"
+                        Background="{StaticResource MainBlackColor}"/>
+                </MenuItem>
+                
+                <MenuItem
+                        Header="About Me" 
+                        Click="InfoAbout"
+                        Style="{StaticResource DefoltMenuItem}"/>
+            </Menu>
+                
+        </ToolBar>
+        <Grid x:Name="Shifr"
+                    Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="100"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Grid.ColumnSpan="3"
+                Orientation="Horizontal"
+                VerticalAlignment="Center">
+                <TextBlock 
+                    Text="Key"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                <TextBox 
+                    x:Name="KeyBox"
+                    Text="5"
+                    FontSize="25"
+                    Width="70"
+                    TextAlignment="Right"
+                    TextChanged="ChangeLangEvent"/>
+                <Button
+                    x:Name="EncryptButt"
+                    Background="#8dd28a"
+                    Content="Encrypt"
+                    FontSize="25"
+                    Padding="10,0,10,0"
+                    Margin="15,0,0,0"
+                    Click="Encript_Button_Click"
+                    />
+                <Button
+                    x:Name="DecryptButt"
+                    Content="Decrypt"
+                    FontSize="25"
+                    Padding="10,0,10,0"
+                    Margin="5,0"
+                    Click="Decript_Button_Click"
+                    />
+                <StackPanel>
+                    <CheckBox
+                        x:Name="UseAlfabet"
+                        Content="Use Alfabet"
+                        Foreground="{StaticResource TextColor}"
+                        VerticalAlignment="Center" 
+                        Click="ChangeLangEvent"
+                        />
+                    <RadioButton x:Name="UseEn"
+                                 IsChecked="True"
+                                 Foreground="{StaticResource TextColor}"
+                                 IsEnabled="{Binding ElementName=UseAlfabet ,Path=IsChecked}"
+                                 Click="ChangeLangEvent"
+                                 Content="ENG"/>
+                    <RadioButton x:Name="UseUa"
+                                 Foreground="{StaticResource TextColor}"
+                                 IsEnabled="{Binding ElementName=UseAlfabet ,Path=IsChecked}"
+                                 Click="ChangeLangEvent"
+                                 Content="УКР"/>
+
+                </StackPanel>
+            </StackPanel>
+            <TextBox
+                    x:Name="InputTextBox"
+                    Grid.Row="1"
+                    Style="{StaticResource BigField}" TextChanged="InputTextBox_TextChanged"
+                    />
+            <Button
+                x:Name="Swap"
+                Background="Transparent"
+                BorderThickness="0"
+                Grid.Column="1"
+                Grid.Row="1"
+                Margin="0,5,0,15"
+                Click="Swap_Click"
+                >
+                <Image Source="D:\Programming\Grafics\dudars 2d game\1x\replay_1mdpi.png"/>
+            </Button>
+            <TextBox
+                    x:Name="OutputTextBox"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Style="{StaticResource BigField}"
+                    IsReadOnly="true"
+                    TextChanged="OutputTextBox_TextChanged"
+                    />
+            <TextBox
+                    x:Name="InputChastotTextBox"
+                    Grid.Row="3"
+                    Style="{StaticResource SmallField}"
+                    />
+            <TextBox
+                    x:Name="OutputChastotTextBox"
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Style="{StaticResource SmallField}"
+                    />
+        </Grid>
+    </Grid>
+</Window>
+ 
