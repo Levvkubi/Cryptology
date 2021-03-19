@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Crypto_1_Cezar
 {
-    class Сypher
+    class Cypher
     {
     }
 }
