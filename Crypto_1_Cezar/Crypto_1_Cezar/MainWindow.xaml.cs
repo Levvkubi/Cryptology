@@ -23,7 +23,7 @@ namespace Crypto_1_Cezar
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        Cypher cypher;
         //змінна зберігає чи зашифрувати зараз текст чи дешефрувати (якщо true зашифрувати), можливо не найкраще рішення використовувати bool
         bool lastActEncript = true;
         Brush defoltButtColor;
@@ -34,6 +34,9 @@ namespace Crypto_1_Cezar
         public MainWindow()
         {
             InitializeComponent();
+
+            cypher = new Caesars_code();
+
             defoltButtColor = DecryptButt.Background;
             activeButtColor = EncryptButt.Background;
 
@@ -74,11 +77,11 @@ namespace Crypto_1_Cezar
                 return;
             Func<string, int, int, string> crypt;
             if (encrypt)
-                crypt = Caesars_code.Encrypt;
+                crypt = cypher.Encrypt;
             else
-                crypt = Caesars_code.Decrypt;
+                crypt = cypher.Decrypt;
 
-            if (Caesars_code.IsValidKey(KeyBox.Text))
+            if (cypher.IsValidKey(KeyBox.Text))
             {
                 OutputTextBox.Text = crypt(
                     InputTextBox.Text, 
@@ -100,12 +103,12 @@ namespace Crypto_1_Cezar
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             Crypt(lastActEncript);
-            InputChastotTextBox.Text = Caesars_code.GetFrequency(InputTextBox.Text);
+            InputChastotTextBox.Text = cypher.GetFrequency(InputTextBox.Text);
         }
 
         private void OutputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            OutputChastotTextBox.Text = Caesars_code.GetFrequency(OutputTextBox.Text);
+            OutputChastotTextBox.Text = cypher.GetFrequency(OutputTextBox.Text);
         }
 
         private void ChangeLangEvent(object sender, RoutedEventArgs e)
@@ -115,18 +118,18 @@ namespace Crypto_1_Cezar
         private void BruetForseAuto(object sender, RoutedEventArgs e)
         {
             int key;
-            Caesars_code.BroutForseAuto(InputTextBox.Text,out key, getLangState());
+            cypher.BroutForseAuto(InputTextBox.Text,out key, getLangState());
             KeyBox.Text = key.ToString();
             buttonClick(false);
         }
         private void BruetForseManualy(object sender, RoutedEventArgs e)
         {
-            OutputTextBox.Text = Caesars_code.BroutForseManual(InputTextBox.Text, getLangState());
+            OutputTextBox.Text = cypher.BroutForseManual(InputTextBox.Text, getLangState());
             //тут би асинхронно добавляти тект до поля
         }
         private void HackByFreguency(object sender, RoutedEventArgs e)
         {
-            KeyBox.Text = Caesars_code.HackByFreguency(InputTextBox.Text, getLangState()).ToString();
+            KeyBox.Text = cypher.HackByFreguency(InputTextBox.Text, getLangState()).ToString();
             buttonClick(false);//імітується нажаття на кнопку розшифрувати для зміни стану в інтерфейсі
                                //і щоб в вихіднопу полі було розшифроване повідомлення
         }

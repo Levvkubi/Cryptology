@@ -8,10 +8,7 @@ namespace Crypto_1_Cezar
 {
     public class Caesars_code : Cypher
     {
-        public static bool IsValidKey(string key)
-        {
-            return int.TryParse(key, out int a);
-        }
+        
         public override string Encrypt(string input, int key, int lang)
         {
             if (input.Length == 0)
@@ -89,7 +86,7 @@ namespace Crypto_1_Cezar
 
             return result;
         }
-        public string BroutForseManual(string input, int lang)
+        public override string BroutForseManual(string input, int lang)
         {
             string result = string.Empty;
 
@@ -110,24 +107,8 @@ namespace Crypto_1_Cezar
 
             return result;
         }
-        private int BinarySearch(string[] array, string searchedValue, int left, int right)
-        {
-            while (left <= right)
-            {
-                var middle = (left + right) / 2;
-                if (middle >= array.Length)
-                    return -1;
-
-                if (searchedValue.Equals(array[middle]))
-                    return 0;
-                else if (searchedValue.CompareTo(array[middle]) < 0)
-                    right = middle - 1;
-                else
-                    left = middle + 1;
-            }
-            return -1;
-        }
-        public string BroutForseAuto(string input, out int key, int lang)
+        
+        public override string BroutForseAuto(string input, out int key, int lang)
         {
             string[] dict;
             int bestKey = 0;
@@ -160,58 +141,9 @@ namespace Crypto_1_Cezar
             key = bestKey;
             return Decrypt(input, key, lang);
         }
-        public string GetFrequency(string input)
-        {
-            Dictionary<char, int> frequencies = new Dictionary<char, int>();
-            foreach (var item in input)
-            {
-                if (frequencies.ContainsKey(item))
-                    frequencies[item]++;
-                else
-                    frequencies.Add(item, 1);
-            }
-            var ordered = frequencies.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-            string resK = string.Empty;
-            string resV = string.Empty;
-
-            foreach (var item in ordered.Reverse())
-            {
-                if (item.Key == '\n')
-                    resK += $"'\\n'\t";
-                else if (item.Key == '\t')
-                    resK += $"'\\'t'\t";
-                else if (item.Key == '\r')
-                    resK += $"'\\'r'\t";
-                else
-                    resK += $"'{item.Key}'\t";
-                resV += $"{Math.Round((float)item.Value / input.Length * 100, 1)}%\t";
-            }
-            return resK + '\n' + resV;
-        }
-        private char MostCommonSymbol(string input)
-        {
-            if (input.Length == 0)
-                throw new ArgumentNullException();
-            char rez = input[0];
-            int count = 1;
-            Dictionary<char, int> frequencies = new Dictionary<char, int>();
-            foreach (var item in input)
-            {
-                if (frequencies.ContainsKey(item))
-                {
-                    frequencies[item]++;
-                    if (frequencies[item] > count)
-                    {
-                        rez = item;
-                        count = frequencies[item];
-                    }
-                }
-                else
-                    frequencies.Add(item, 1);
-            }
-            return rez;
-        }
-        public int HackByFreguency(string input, int lang)
+        
+        
+        public override int HackByFreguency(string input, int lang)
         {
             if (input.Length == 0)
                 return 0;// повертаю нульовий ключ
