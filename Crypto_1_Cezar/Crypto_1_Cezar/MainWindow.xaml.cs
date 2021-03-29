@@ -35,7 +35,7 @@ namespace Crypto_1_Cezar
         {
             InitializeComponent();
 
-            cypher = new Caesars_code();
+            cypher = new Trimeus_code();
 
             defoltButtColor = DecryptButt.Background;
             activeButtColor = EncryptButt.Background;
@@ -75,17 +75,17 @@ namespace Crypto_1_Cezar
             //тут виникає помилка нулл референс в ідеалі з цим бт поглибше розібратись
             if (UseAlfabet == null)
                 return;
-            Func<string, int, int, string> crypt;
+            Func<string, string[], int, string> crypt;
             if (encrypt)
                 crypt = cypher.Encrypt;
             else
                 crypt = cypher.Decrypt;
 
-            if (cypher.IsValidKey(KeyBox.Text))
+            if (cypher.IsValidKey(new string[] { KeyBox.Text }))
             {
                 OutputTextBox.Text = crypt(
-                    InputTextBox.Text, 
-                    int.Parse(KeyBox.Text),
+                    InputTextBox.Text,
+                    new string[] { KeyBox.Text },
                     getLangState()
                     );
             }
@@ -117,9 +117,9 @@ namespace Crypto_1_Cezar
         }
         private void BruetForseAuto(object sender, RoutedEventArgs e)
         {
-            int key;
+            string[] key;
             cypher.BroutForseAuto(InputTextBox.Text,out key, getLangState());
-            KeyBox.Text = key.ToString();
+            KeyBox.Text = key[0];
             buttonClick(false);
         }
         private void BruetForseManualy(object sender, RoutedEventArgs e)

@@ -9,10 +9,12 @@ namespace Crypto_1_Cezar
     public class Caesars_code : Cypher
     {
         
-        public override string Encrypt(string input, int key, int lang)
+        public override string Encrypt(string input, string[] keys, int lang)
         {
-            if (input.Length == 0)
+            if (input.Length == 0 || !IsValidKey(keys))
                 return string.Empty;
+
+            int key = int.Parse(keys[0]);
 
             string result = string.Empty;
             string alfabet;
@@ -46,10 +48,12 @@ namespace Crypto_1_Cezar
        
             return result;
         }
-        public override string Decrypt(string input, int key, int lang)
+        public override string Decrypt(string input, string[] keys, int lang)
         {
-            if (input.Length == 0)
+            if (input.Length == 0 || !IsValidKey(keys))
                 return string.Empty;
+
+            int key = int.Parse(keys[0]); 
 
             string result = string.Empty;
             if (lang == 0)
@@ -93,7 +97,7 @@ namespace Crypto_1_Cezar
             if(lang == 0)
             {
                 for (int i = 0; i < lenOfDev; i++)
-                     result += $"Key {i}\t - {Decrypt(input, i,lang)}\n";
+                     result += $"Key {i}\t - {Decrypt(input, new string[] {i.ToString()},lang)}\n";
                 return result;
             }
             string alfabet;
@@ -103,13 +107,14 @@ namespace Crypto_1_Cezar
                 alfabet = alfabetUa;
 
             for (int i = 1; i < alfabet.Length; i++)
-                result += $"Key {i}\t - {Decrypt(input, i, lang)}\n";
+                result += $"Key {i}\t - {Decrypt(input, new string[] { i.ToString() }, lang)}\n";
 
             return result;
         }
         
-        public override string BroutForseAuto(string input, out int key, int lang)
+        public override string BroutForseAuto(string input, out string[] keys, int lang)
         {
+
             string[] dict;
             int bestKey = 0;
             int maxVerbs = 0;
@@ -128,7 +133,7 @@ namespace Crypto_1_Cezar
             for (int i = 1; i < length; i++)
             {
                 int currentVerbs = 0;
-                string curr = Decrypt(input, i, lang);
+                string curr = Decrypt(input, new string[] { i.ToString() }, lang);
                 foreach (var item in curr.Split())
                     if (BinarySearch(dict, item.ToUpper(), 0, dict.Length) == 0)
                         currentVerbs++;
@@ -138,8 +143,9 @@ namespace Crypto_1_Cezar
                     bestKey = i;
                 }
             }
-            key = bestKey;
-            return Decrypt(input, key, lang);
+            int key = bestKey;
+            keys = new string[] { key.ToString() };
+            return Decrypt(input, new string[] {key.ToString()}, lang);
         }
         
         
@@ -174,5 +180,12 @@ namespace Crypto_1_Cezar
                 return 0;
         }
 
+        public override bool IsValidKey(string[] keys)
+        {
+            if (keys.Length != 1)
+                return false;
+            else 
+                return int.TryParse(keys[0], out int a);
+        }
     }
 }

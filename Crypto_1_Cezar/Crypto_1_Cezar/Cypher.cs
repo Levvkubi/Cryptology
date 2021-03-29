@@ -10,10 +10,11 @@ namespace Crypto_1_Cezar
         public static string alfabetEn = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ,.!?()";
         public static string alfabetUa = "абвгдеєжзиіїйклмнопрстуфхцчшщьюяФБВГДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ0123456789_ ,.!?()";
         public static int lenOfDev = 65536;
-        public abstract string Encrypt(string input, int key, int lang);
-        public abstract string Decrypt(string input, int key, int lang);
+        public abstract string Encrypt(string input, string[] keys, int lang);
+        //перші два шифри можна було б замінити одним статичним методом з одним лиш вирахуванням ссуву яке відрізняється але надалі це здається не підійде
+        public abstract string Decrypt(string input, string[] keys, int lang);
         public abstract string BroutForseManual(string input, int lang);
-        public abstract string BroutForseAuto(string input, out int key, int lang);
+        public abstract string BroutForseAuto(string input, out string[] keys, int lang);
         protected int BinarySearch(string[] array, string searchedValue, int left, int right)
         {
             while (left <= right)
@@ -83,9 +84,7 @@ namespace Crypto_1_Cezar
             return rez;
         }
         public abstract int HackByFreguency(string input, int lang);
-        public bool IsValidKey(string key)
-        {
-            return int.TryParse(key, out int a);
-        }
+        public abstract bool IsValidKey(string[] keys);
+        
     }
 }
