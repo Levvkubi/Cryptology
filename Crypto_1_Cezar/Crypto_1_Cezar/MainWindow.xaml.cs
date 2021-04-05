@@ -77,6 +77,11 @@ namespace Crypto_1_Cezar
             buttonClick(false);
         }
         //цей метод перешифровує повідомлення і перераховує частоти, викликається часто
+        private void updateFields()
+        {
+            InputTextBox.Text = input;
+            OutputTextBox.Text = output;
+        }
         private void Crypt(bool encrypt)
         {   //Мабуть тому що поле для вводу ключа створюється швидше за UseAlfabet і воно викликає цей метод
             //тут виникає помилка нулл референс в ідеалі з цим бт поглибше розібратись
@@ -87,14 +92,15 @@ namespace Crypto_1_Cezar
                 crypt = cypher.Encrypt;
             else
                 crypt = cypher.Decrypt;
-            crypter(crypt);            
+            crypter(crypt);
+            updateFields();
         }
         private void CaesarsCrypt(Func<string, string[], int, string> crypt)
         {
             if (cypher.IsValidKey(new string[] { KeyBox.Text }))
             {
-                OutputTextBox.Text = crypt(
-                    InputTextBox.Text,
+               output = crypt(
+                    input,
                     new string[] { KeyBox.Text },
                     getLangState()
                     );
@@ -121,8 +127,8 @@ namespace Crypto_1_Cezar
                 args = new string[] { AGasBox.Text };
             if (cypher.IsValidKey(args))
             {
-                OutputTextBox.Text = crypt(
-                    InputTextBox.Text,
+                output = crypt(
+                    input,
                     args,
                     getLangState()
                     );
@@ -131,22 +137,25 @@ namespace Crypto_1_Cezar
 
         private void Swap_Click(object sender, RoutedEventArgs e)
         {
-            string currText = InputTextBox.Text;
-            InputTextBox.Text = OutputTextBox.Text;
-            OutputTextBox.Text = currText;
+            string currText = input;
+            input = output;
+            output = currText;
+
+            updateFields();
 
             Crypt(lastActEncript);
         }
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            input = InputTextBox.Text;
             Crypt(lastActEncript);
-            InputChastotTextBox.Text = cypher.GetFrequency(InputTextBox.Text);
+            InputChastotTextBox.Text = cypher.GetFrequency(input);
         }
 
         private void OutputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            OutputChastotTextBox.Text = cypher.GetFrequency(OutputTextBox.Text);
+            OutputChastotTextBox.Text = cypher.GetFrequency(output);
         }
 
         private void ChangeLangEvent(object sender, RoutedEventArgs e)
@@ -156,10 +165,10 @@ namespace Crypto_1_Cezar
         private void BruetForseAuto(object sender, RoutedEventArgs e)
         {
             string[] keys;
-            cypher.BroutForseAuto(InputTextBox.Text,out keys, getLangState());
-            if(currCypher == 1)
+            cypher.BroutForseAuto(input,out keys, getLangState());
+            if(currCypher == 0)
                 KeyBox.Text = keys[0];
-            else if(currCypher == 2)
+            else if(currCypher == 1)
             {
                 if (!int.TryParse(keys[0], out int a))
                     AGasBox.Text = keys[0];
@@ -187,12 +196,12 @@ namespace Crypto_1_Cezar
         }
         private void BruetForseManualy(object sender, RoutedEventArgs e)
         {
-            OutputTextBox.Text = cypher.BroutForseManual(InputTextBox.Text, getLangState());
-            //тут би асинхронно добавляти тект до поля
+            output = cypher.BroutForseManual(input, getLangState());
+            updateFields();
         }
         private void HackByFreguency(object sender, RoutedEventArgs e)
         {
-            KeyBox.Text = cypher.HackByFreguency(InputTextBox.Text, getLangState()).ToString();
+            KeyBox.Text = cypher.HackByFreguency(input, getLangState()).ToString();
             buttonClick(false);//імітується нажаття на кнопку розшифрувати для зміни стану в інтерфейсі
                                //і щоб в вихіднопу полі було розшифроване повідомлення
         }
@@ -214,11 +223,12 @@ namespace Crypto_1_Cezar
                 {
                     if (!openDialog.FileName.EndsWith(".txt"))
                     {
-                        InputTextBox.Text = Convert.ToBase64String(File.ReadAllBytes(openedFile));
+                        input = Convert.ToBase64String(File.ReadAllBytes(openedFile));
                     }
                     else
-                        InputTextBox.Text = sr.ReadToEnd();
+                        input = sr.ReadToEnd();
                 }
+                updateFields();
                 SaveButton.IsEnabled = true;//оскільки файл вже відкритий то в нього тепер можна зберігати данні
             }
         }
@@ -228,17 +238,17 @@ namespace Crypto_1_Cezar
             {
                 if (!openedFile.Contains(".txt"))
                 {
-                    byte[] bytes = Convert.FromBase64String(OutputTextBox.Text);
+                    byte[] bytes = Convert.FromBase64String(output);
                     var imageMemoryStream = new MemoryStream(bytes);
                     System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(imageMemoryStream);
                     imageFromStream.Save(openedFile, ImageFormat.Jpeg);
                 }
                 else
                 {
-                    byte[] txtBytes = Encoding.ASCII.GetBytes(OutputTextBox.Text);
+                    byte[] txtBytes = Encoding.ASCII.GetBytes(output);
                     File.WriteAllBytes(openedFile, txtBytes);
                 }
-                File.WriteAllText(openedFile, OutputTextBox.Text);
+                File.WriteAllText(openedFile, output);
             }
             catch (Exception)
             {
@@ -253,18 +263,18 @@ namespace Crypto_1_Cezar
                 {
                     if (!saveDialog.FileName.Contains(".txt"))
                     {
-                        byte[] bytes = Convert.FromBase64String(OutputTextBox.Text);
+                        byte[] bytes = Convert.FromBase64String(output);
                         var imageMemoryStream = new MemoryStream(bytes);
                         System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(imageMemoryStream);
                         imageFromStream.Save(saveDialog.FileName, ImageFormat.Jpeg);
                     }
                     else
                     {
-                        byte[] txtBytes = Encoding.ASCII.GetBytes(OutputTextBox.Text);
+                        byte[] txtBytes = Encoding.ASCII.GetBytes(output);
                         File.WriteAllBytes(saveDialog.FileName, txtBytes);
                     }
 
-                    //File.WriteAllText(saveDialog.FileName, OutputTextBox.Text);
+                    //File.WriteAllText(saveDialog.FileName, output);
                     //openedFile = saveDialog.FileName;
                     //SaveButton.IsEnabled = true;//оскільки файл вже відкритий то в нього тепер можна зберігати данні
                 }
