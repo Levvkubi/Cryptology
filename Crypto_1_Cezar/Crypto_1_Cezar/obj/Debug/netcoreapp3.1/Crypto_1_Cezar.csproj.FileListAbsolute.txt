@@ -17,3 +17,9 @@ D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\ne
 D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\Crypto_1_Cezar.dll
 D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\Crypto_1_Cezar.pdb
 D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\Crypto_1_Cezar.genruntimeconfig.cache
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\bin\Debug\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\Crypto_1_Cezar.csproj.CopyComplete

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,13 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Drawing;
+using System.Drawing.Imaging;
+
 
 namespace Crypto_1_Cezar
 {
@@ -23,19 +20,29 @@ namespace Crypto_1_Cezar
     /// </summary>
     public partial class MainWindow : Window
     {
+        string input = string.Empty;
+        string output = string.Empty;
         Cypher cypher;
+        int currCypher;
         //змінна зберігає чи зашифрувати зараз текст чи дешефрувати (якщо true зашифрувати), можливо не найкраще рішення використовувати bool
         bool lastActEncript = true;
-        Brush defoltButtColor;
-        Brush activeButtColor;
+        bool useGaslo = false;// для шифру тримеуса
+        Action<Func<string, string[], int, string>> crypter;
+        System.Windows.Media.Brush defoltButtColor;
+        System.Windows.Media.Brush activeButtColor;
         OpenFileDialog openDialog;
         SaveFileDialog saveDialog;
         string openedFile;
+        List<StackPanel> inputPanels;
         public MainWindow()
         {
             InitializeComponent();
 
-            cypher = new Trimeus_code();
+            inputPanels = new List<StackPanel>();
+            inputPanels.Add(CaesarInputKey);
+            inputPanels.Add(TrimeusInputKey);
+
+            changeCrypt(SelectCrypt.SelectedIndex);
 
             defoltButtColor = DecryptButt.Background;
             activeButtColor = EncryptButt.Background;
@@ -80,12 +87,43 @@ namespace Crypto_1_Cezar
                 crypt = cypher.Encrypt;
             else
                 crypt = cypher.Decrypt;
-
+            crypter(crypt);            
+        }
+        private void CaesarsCrypt(Func<string, string[], int, string> crypt)
+        {
             if (cypher.IsValidKey(new string[] { KeyBox.Text }))
             {
                 OutputTextBox.Text = crypt(
                     InputTextBox.Text,
                     new string[] { KeyBox.Text },
+                    getLangState()
+                    );
+            }
+        }
+        private void TrimeusCrypt(Func<string, string[], int, string> crypt)
+        {
+            if (AGasBox.Text == string.Empty)
+                return;// помилка валідації мала б оброблятись тут
+            string[] args;
+            if(int.TryParse( AGasBox.Text,out int a))// мені самому боляче дивитись на цей код але час піджимає(
+            {
+                if(Bkey.Text != string.Empty)
+                {
+                    if (Ckey.Text != string.Empty)
+                        args = new string[] { AGasBox.Text, Bkey.Text, Ckey.Text };
+                    else
+                        args = new string[] { AGasBox.Text, Bkey.Text };
+                }
+                else
+                        args = new string[] { AGasBox.Text };
+            }
+            else
+                args = new string[] { AGasBox.Text };
+            if (cypher.IsValidKey(args))
+            {
+                OutputTextBox.Text = crypt(
+                    InputTextBox.Text,
+                    args,
                     getLangState()
                     );
             }
@@ -117,9 +155,34 @@ namespace Crypto_1_Cezar
         }
         private void BruetForseAuto(object sender, RoutedEventArgs e)
         {
-            string[] key;
-            cypher.BroutForseAuto(InputTextBox.Text,out key, getLangState());
-            KeyBox.Text = key[0];
+            string[] keys;
+            cypher.BroutForseAuto(InputTextBox.Text,out keys, getLangState());
+            if(currCypher == 1)
+                KeyBox.Text = keys[0];
+            else if(currCypher == 2)
+            {
+                if (!int.TryParse(keys[0], out int a))
+                    AGasBox.Text = keys[0];
+                else
+                {
+                    if (keys[0] == "0")
+                    {
+                        if (keys[1] == "0")
+                            AGasBox.Text = keys[2];
+                        else
+                        {
+                            AGasBox.Text = keys[1];
+                            Bkey.Text = keys[2];
+                        }
+                    }
+                    else
+                    {
+                        AGasBox.Text = keys[0];
+                        Bkey.Text = keys[1];
+                        Ckey.Text = keys[2];
+                    }
+}
+            }
             buttonClick(false);
         }
         private void BruetForseManualy(object sender, RoutedEventArgs e)
@@ -163,6 +226,18 @@ namespace Crypto_1_Cezar
         {
             try
             {
+                if (!openedFile.Contains(".txt"))
+                {
+                    byte[] bytes = Convert.FromBase64String(OutputTextBox.Text);
+                    var imageMemoryStream = new MemoryStream(bytes);
+                    System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(imageMemoryStream);
+                    imageFromStream.Save(openedFile, ImageFormat.Jpeg);
+                }
+                else
+                {
+                    byte[] txtBytes = Encoding.ASCII.GetBytes(OutputTextBox.Text);
+                    File.WriteAllBytes(openedFile, txtBytes);
+                }
                 File.WriteAllText(openedFile, OutputTextBox.Text);
             }
             catch (Exception)
@@ -176,17 +251,22 @@ namespace Crypto_1_Cezar
             {
                 try
                 {
-                    //if (!saveDialog.FileName.EndsWith(".txt"))
-                    //{
-                    //    byte[] bytes = Convert.FromBase64String(OutputTextBox.Text);
-                    //    var imageMemoryStream = new MemoryStream(bytes);
-                    //    Image imageFromStream = Image.FromStream(imageMemoryStream);
-                    //    imageFromStream.Save(filename, ImageFormat.Jpeg);
-                    //}
+                    if (!saveDialog.FileName.Contains(".txt"))
+                    {
+                        byte[] bytes = Convert.FromBase64String(OutputTextBox.Text);
+                        var imageMemoryStream = new MemoryStream(bytes);
+                        System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(imageMemoryStream);
+                        imageFromStream.Save(saveDialog.FileName, ImageFormat.Jpeg);
+                    }
+                    else
+                    {
+                        byte[] txtBytes = Encoding.ASCII.GetBytes(OutputTextBox.Text);
+                        File.WriteAllBytes(saveDialog.FileName, txtBytes);
+                    }
 
-                    File.WriteAllText(saveDialog.FileName, OutputTextBox.Text);
-                    openedFile = saveDialog.FileName;
-                    SaveButton.IsEnabled = true;//оскільки файл вже відкритий то в нього тепер можна зберігати данні
+                    //File.WriteAllText(saveDialog.FileName, OutputTextBox.Text);
+                    //openedFile = saveDialog.FileName;
+                    //SaveButton.IsEnabled = true;//оскільки файл вже відкритий то в нього тепер можна зберігати данні
                 }
                 catch (Exception)
                 {
@@ -197,6 +277,41 @@ namespace Crypto_1_Cezar
         private void InfoAbout(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Developed by\nМАМИН ХАЦКЕР corp");
+        }
+
+        private void SelectCrypt_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            changeCrypt(SelectCrypt.SelectedIndex);
+            Crypt(lastActEncript);
+        }
+        private void changeCrypt(int ind)
+        {
+            switch (SelectCrypt.SelectedIndex)
+            {
+                case 0:
+                    cypher = new Caesars_code();
+                    crypter = CaesarsCrypt;
+                    break;
+                case 1:
+                    cypher = new Trimeus_code();
+                    crypter = TrimeusCrypt;
+                    break;
+                default:
+                    break;
+            }
+            // при старті чомусь викликається метод змінени стану комбобокса а масив на той момент ще не ініціалізований
+            if (inputPanels!= null)
+                changePanel(ind);
+
+            currCypher = ind;
+        }
+        private void changePanel(int ind)
+        {
+            foreach (var item in inputPanels)
+            {
+                item.Visibility = Visibility.Collapsed;
+            }
+            inputPanels[ind].Visibility = Visibility.Visible;
         }
     }
 }

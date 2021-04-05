@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Crypto_1_Cezar
@@ -17,12 +18,13 @@ namespace Crypto_1_Cezar
                     res = int.Parse(args[0]);
                 else
                 {
-                    // realisation gaslo code
+                    int ind = curr % args[0].Length;
+                    res += (int)alfabetEn.IndexOf(args[0][ind]);
                 }
             }
             else if (args.Length == 2)
                 res = int.Parse(args[0]) * curr + int.Parse(args[1]);
-            else if (args.Length == 2)
+            else if (args.Length == 3)
                 res = int.Parse(args[0]) * curr * curr + int.Parse(args[1]) * curr + int.Parse(args[2]);
             return res;
         }
@@ -112,12 +114,95 @@ namespace Crypto_1_Cezar
         }
         public override string BroutForseAuto(string input, out string[] keys, int lang)
         {
-            throw new NotImplementedException();
+            string[] dict;
+            int[] bestKeys = { 0, 0, 0 };
+            int maxVerbs = 0;
+            using (StreamReader sr = new StreamReader(@"D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\Dicshinary.txt"))
+            {
+                dict = sr.ReadToEnd().Split("\r\n");
+            }
+            int length;
+
+            if (lang == 0)
+                length = lenOfDev;
+            else if (lang == 1)
+                length = alfabetEn.Length;
+            else
+                length = alfabetUa.Length;
+            for (int i = 1; i < length; i++)
+                for (int j = 0; j < length; j++)
+                    for (int k = 0; k < length; k++)
+                    {
+                        int currentVerbs = 0;
+                        string curr = Decrypt(input, new string[] { k.ToString(), j.ToString(), i.ToString() }, lang);
+                        foreach (var item in curr.Split())
+                            if (BinarySearch(dict, item.ToUpper(), 0, dict.Length) == 0)
+                                currentVerbs++;
+                        if (currentVerbs > maxVerbs)
+                        {
+                            maxVerbs = currentVerbs;
+                            bestKeys = new int[] { k, j, i };
+                        }
+                    }
+            //for (int j = 0; j < length; j++)
+            //    for (int k = 0; k < length; k++)
+            //    {
+            //        int currentVerbs = 0;
+            //        string curr = Decrypt(input, new string[] { k.ToString(), j.ToString()}, lang);
+            //        foreach (var item in curr.Split())
+            //            if (BinarySearch(dict, item.ToUpper(), 0, dict.Length) == 0)
+            //                currentVerbs++;
+            //        if (currentVerbs > maxVerbs)
+            //        {
+            //            maxVerbs = currentVerbs;
+            //            bestKeys = new int[] { k, j };
+            //        }
+            //    }
+            //for (int k = 0; k < length; k++)
+            //{
+            //    int currentVerbs = 0;
+            //    string curr = Decrypt(input, new string[] { k.ToString() }, lang);
+            //    foreach (var item in curr.Split())
+            //        if (BinarySearch(dict, item.ToUpper(), 0, dict.Length) == 0)
+            //            currentVerbs++;
+            //    if (currentVerbs > maxVerbs)
+            //    {
+            //        maxVerbs = currentVerbs;
+            //        bestKeys = new int[] { k };
+            //    }
+            //}
+            keys = new string[bestKeys.Length];
+            for (int i = 0; i < bestKeys.Length; i++)
+            {
+                keys[i] = bestKeys[i].ToString();
+            }
+            return Decrypt(input, keys, lang);
         }
 
         public override string BroutForseManual(string input, int lang)
         {
-            throw new NotImplementedException();
+            string result = string.Empty;
+
+            if (lang == 0)
+            {
+                for (int i = 0; i < lenOfDev; i++)
+                    for (int j = 0; j < lenOfDev; j++)
+                        for (int k = 0; k < lenOfDev; k++)
+                            result += $"Key A {k} B {j} C {i}\t - {Decrypt(input, new string[] { k.ToString(), j.ToString(), i.ToString() }, lang)}\n";
+                return result;
+            }
+            string alfabet;
+            if (lang == 1)
+                alfabet = alfabetEn;
+            else
+                alfabet = alfabetUa;
+
+            for (int i = 1; i < alfabet.Length; i++)
+                for (int j = 0; j < alfabet.Length; j++)
+                    for (int k = 0; k < alfabet.Length; k++)
+                        result += $"Key A {k} B {j} C {i}\t - {Decrypt(input, new string[] { k.ToString(), j.ToString(), i.ToString() }, lang)}\n";
+
+            return result;
         }
 
         public override int HackByFreguency(string input, int lang)

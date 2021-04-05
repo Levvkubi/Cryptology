@@ -36,6 +36,56 @@
             <Setter Property="Background" Value="{StaticResource FieldBlackColor}"/>
             <Setter Property="FontSize" Value="20"/>
         </Style>
+        <Style TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Background" Value="{StaticResource FieldBlackColor}"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style  TargetType="{x:Type ComboBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton Grid.Column="2" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" >
+                                <ToggleButton.Template>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border x:Name="Border"  Grid.ColumnSpan="2" CornerRadius="5" Background="{StaticResource MainBlackColor}" BorderBrush="Black" BorderThickness="1" />
+                                            <Border Grid.Column="0" CornerRadius="5,0,0,5"  Margin="1"  Background="{StaticResource MainBlackColor}"  BorderBrush="Black" BorderThickness="0,0,1,0" />
+                                            <Path x:Name="Arrow" Grid.Column="1"  Fill="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="ToggleButton.IsMouseOver" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="{StaticResource FieldBlackColor}" />
+                                            </Trigger>
+                                            <Trigger Property="ToggleButton.IsChecked" Value="true">
+                                                <Setter TargetName="Border" Property="Background" Value="{StaticResource FieldBlackColor}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="3"  />
+                            <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" /><!--IsReadOnly="{TemplateBinding IsReadOnly}"-->
+                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"  Focusable="False" PopupAnimation="Slide">
+                                <Grid  Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="{StaticResource FieldBlackColor}" />
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid Background="#2d2d30">
         <Grid.RowDefinitions>
@@ -90,11 +140,25 @@
                         Style="{StaticResource DefoltMenuItem}"
                         Background="{StaticResource MainBlackColor}"/>
                 </MenuItem>
+                <ComboBox
+                    x:Name="SelectCrypt"
+                    Background="{StaticResource MainBlackColor}"
+                    Foreground="{StaticResource TextColor}"
+                    Width="100" SelectionChanged="SelectCrypt_SelectionChanged">
+                    <ComboBoxItem>
+                        <TextBlock Text="Caesar"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem IsSelected="True">
+                        <TextBlock Text="Trimeus"/>
+                    </ComboBoxItem>
+                </ComboBox>
                 
                 <MenuItem
                         Header="About Me" 
                         Click="InfoAbout"
-                        Style="{StaticResource DefoltMenuItem}"/>
+                        Style="{StaticResource DefoltMenuItem}"
+                        Background="{StaticResource MainBlackColor}"/>
+                
             </Menu>
                 
         </ToolBar>
@@ -114,19 +178,70 @@
                 Grid.ColumnSpan="3"
                 Orientation="Horizontal"
                 VerticalAlignment="Center">
-                <TextBlock 
+                <StackPanel 
+                    x:Name="CaesarInputKey"
+                    Orientation="Horizontal">
+
+                    <TextBlock 
                     Text="Key"
                     FontSize="25"
                     Margin="20,0,20,0"
                     Foreground="{StaticResource TextColor}"
                     />
-                <TextBox 
+                    <TextBox 
                     x:Name="KeyBox"
                     Text="5"
                     FontSize="25"
                     Width="70"
                     TextAlignment="Right"
                     TextChanged="ChangeLangEvent"/>
+                    
+
+                </StackPanel>
+                <StackPanel x:Name="TrimeusInputKey"
+                    Orientation="Horizontal">
+                    <TextBlock 
+                    Text="A/Gaslo"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="AGasBox"
+                    Text="5"
+                    FontSize="25"
+                    Width="70"
+                    TextAlignment="Right"
+                    TextChanged="ChangeLangEvent"/>
+                    <TextBlock 
+                    Text="B"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="Bkey"
+                    Text=""
+                    FontSize="25"
+                    Width="70"
+                    TextAlignment="Right"
+                    TextChanged="ChangeLangEvent"/>
+                    <TextBlock 
+                    Text="C"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="Ckey"
+                    Text=""
+                    FontSize="25"
+                    Width="70"
+                    TextAlignment="Right"
+                    TextChanged="ChangeLangEvent"/>
+                </StackPanel>
+
+
                 <Button
                     x:Name="EncryptButt"
                     Background="#8dd28a"
@@ -150,6 +265,7 @@
                         Content="Use Alfabet"
                         Foreground="{StaticResource TextColor}"
                         VerticalAlignment="Center" 
+                        IsChecked="True"
                         Click="ChangeLangEvent"
                         />
                     <RadioButton x:Name="UseEn"

@@ -94,10 +94,10 @@ namespace Crypto_1_Cezar
         {
             string result = string.Empty;
 
-            if(lang == 0)
+            if (lang == 0)
             {
                 for (int i = 0; i < lenOfDev; i++)
-                     result += $"Key {i}\t - {Decrypt(input, new string[] {i.ToString()},lang)}\n";
+                    result += $"Key {i}\t - {Decrypt(input, new string[] { i.ToString() }, lang)}\n";
                 return result;
             }
             string alfabet;
@@ -111,10 +111,9 @@ namespace Crypto_1_Cezar
 
             return result;
         }
-        
+     
         public override string BroutForseAuto(string input, out string[] keys, int lang)
         {
-
             string[] dict;
             int bestKey = 0;
             int maxVerbs = 0;
@@ -143,12 +142,11 @@ namespace Crypto_1_Cezar
                     bestKey = i;
                 }
             }
-            int key = bestKey;
-            keys = new string[] { key.ToString() };
-            return Decrypt(input, new string[] {key.ToString()}, lang);
+            keys = new string[] { bestKey.ToString() };
+            return Decrypt(input, keys, lang);
         }
-        
-        
+
+
         public override int HackByFreguency(string input, int lang)
         {
             if (input.Length == 0)
