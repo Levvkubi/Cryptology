@@ -83,8 +83,17 @@ namespace Crypto_1_Cezar
             }
             return rez;
         }
-        public abstract int HackByFreguency(string input, int lang);
+        public abstract string HackByFreguency(string input, int lang);
         public abstract bool IsValidKey(string[] keys);
+        public abstract void HuckByEnDePair(string encrypted, string decripted, ref string[] args, int lang);
+        public int CheckVerbs(string[] dict, string input)
+        {
+            int res = 0;
+            foreach (var item in input.Split())
+                if (BinarySearch(dict, item.ToUpper(), 0, dict.Length) == 0)
+                    res++;
+            return res;
+        }
         
     }
 }

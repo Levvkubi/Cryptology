@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Drawing;
 using System.Drawing.Imaging;
-
+using Crypto_1_Cezar.Cyphers;
 
 namespace Crypto_1_Cezar
 {
@@ -31,8 +31,10 @@ namespace Crypto_1_Cezar
         System.Windows.Media.Brush defoltButtColor;
         System.Windows.Media.Brush activeButtColor;
         OpenFileDialog openDialog;
+        OpenFileDialog openDialogNote;
         SaveFileDialog saveDialog;
         string openedFile;
+        string noteKeyText;
         List<StackPanel> inputPanels;
         public MainWindow()
         {
@@ -41,6 +43,8 @@ namespace Crypto_1_Cezar
             inputPanels = new List<StackPanel>();
             inputPanels.Add(CaesarInputKey);
             inputPanels.Add(TrimeusInputKey);
+            inputPanels.Add(GammaKeyInputKey);
+            inputPanels.Add(GammaNoteInputKey);
 
             changeCrypt(SelectCrypt.SelectedIndex);
 
@@ -52,6 +56,9 @@ namespace Crypto_1_Cezar
 
             saveDialog = new SaveFileDialog();
             saveDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+
+            openDialogNote = new OpenFileDialog();
+            openDialogNote.Filter = "txt files (*.txt)|*.txt";
         }
         private void buttonClick(bool encrypt)
         {
@@ -82,6 +89,26 @@ namespace Crypto_1_Cezar
             InputTextBox.Text = input;
             OutputTextBox.Text = output;
         }
+        private async void updateFieldsAsync()
+        {
+            //await this.Dispatcher.BeginInvoke(
+            //new Action(() =>
+            //{
+            //    if (input.Length < 1000)
+            //    {
+            //        this.InputTextBox.Text = input;
+            //        this.OutputTextBox.Text = output;
+            //    }
+            //    else
+            //    {
+            //        for (int i = 0; i < input.Length; i++)
+            //        {
+            //            this.InputTextBox.Text += input[i];
+            //        }
+            //    }
+            //}));
+            updateFields();
+        }
         private void Crypt(bool encrypt)
         {   //Мабуть тому що поле для вводу ключа створюється швидше за UseAlfabet і воно викликає цей метод
             //тут виникає помилка нулл референс в ідеалі з цим бт поглибше розібратись
@@ -92,8 +119,9 @@ namespace Crypto_1_Cezar
                 crypt = cypher.Encrypt;
             else
                 crypt = cypher.Decrypt;
+
             crypter(crypt);
-            updateFields();
+            updateFieldsAsync();
         }
         private void CaesarsCrypt(Func<string, string[], int, string> crypt)
         {
@@ -134,6 +162,43 @@ namespace Crypto_1_Cezar
                     );
             }
         }
+        private void GammaKeyCrypt(Func<string, string[], int, string> crypt)
+        {
+            if(GenerateCheckBox.IsChecked == true)
+            {
+                if (GammaKeyBox.Text.Length < input.Length)
+                {
+                    Gamma_code gamma = (Gamma_code)cypher;
+                    GammaKeyBox.Text = gamma.GenerateKey(input.Length, getLangState());
+                }
+            }
+            if(!cypher.IsValidKey(new string[] { GammaKeyBox.Text }))
+            {
+                MessageBox.Show("key is invalid");
+                return;
+            }
+            output = crypt(
+                    input,
+                    new string[] { GammaKeyBox.Text },
+                    getLangState()
+                    );
+        }
+        private void GammaNoteCrypt(Func<string, string[], int, string> crypt)
+        {
+            if (noteKeyText == null)
+                return;
+
+            if (!cypher.IsValidKey(new string[] { noteKeyText }))
+            {
+                MessageBox.Show("Note is invalid");
+                return;
+            }
+            output = crypt(
+                    input,
+                    new string[] { noteKeyText },
+                    getLangState()
+                    );
+        }
 
         private void Swap_Click(object sender, RoutedEventArgs e)
         {
@@ -141,7 +206,7 @@ namespace Crypto_1_Cezar
             input = output;
             output = currText;
 
-            updateFields();
+            updateFieldsAsync();
 
             Crypt(lastActEncript);
         }
@@ -197,13 +262,61 @@ namespace Crypto_1_Cezar
         private void BruetForseManualy(object sender, RoutedEventArgs e)
         {
             output = cypher.BroutForseManual(input, getLangState());
-            updateFields();
+            updateFieldsAsync();
         }
-        private void HackByFreguency(object sender, RoutedEventArgs e)
+        private void HackByFreguency(object sender, RoutedEventArgs e)//caesar 
         {
-            KeyBox.Text = cypher.HackByFreguency(input, getLangState()).ToString();
+            OutputTextBox.Text = cypher.HackByFreguency(input, getLangState()).ToString();
             buttonClick(false);//імітується нажаття на кнопку розшифрувати для зміни стану в інтерфейсі
                                //і щоб в вихіднопу полі було розшифроване повідомлення
+            if (currCypher == 1)
+                OutputTextBox.Text = cypher.HackByFreguency(input, getLangState()).ToString();
+        }
+        private void HackByDecryptMess(object sender, RoutedEventArgs e)
+        {
+            if (currCypher == 0)
+                return;
+
+            InputWindow inputWindow = new InputWindow(this);
+            inputWindow.Show();
+        }
+        public void HackByDecryptMessege(string decrypted,bool usegaslo)
+        {
+            if(decrypted.Length != input.Length)
+            {
+                MessageBox.Show("Invalid lenght");
+                return;
+            }    
+            string[] args;
+            if (usegaslo)
+                args = new string[] { "0" };
+            else
+                args = new string[] { "1" };
+
+            cypher.HuckByEnDePair(input, decrypted,ref args, getLangState());
+            if (usegaslo)
+            {
+                AGasBox.Text = args[0];
+            }
+            else
+            {
+                if (args[0] == "0")
+                {
+                    if (args[1] == "0")
+                        AGasBox.Text = args[2];
+                    else
+                    {
+                        AGasBox.Text = args[1];
+                        Bkey.Text = args[2];
+                    }
+                }
+                else
+                {
+                    AGasBox.Text = args[0];
+                    Bkey.Text = args[1];
+                    Ckey.Text = args[2];
+                }
+            }
         }
         private int getLangState()
         {
@@ -228,7 +341,7 @@ namespace Crypto_1_Cezar
                     else
                         input = sr.ReadToEnd();
                 }
-                updateFields();
+                updateFieldsAsync();
                 SaveButton.IsEnabled = true;//оскільки файл вже відкритий то в нього тепер можна зберігати данні
             }
         }
@@ -306,6 +419,14 @@ namespace Crypto_1_Cezar
                     cypher = new Trimeus_code();
                     crypter = TrimeusCrypt;
                     break;
+                case 2:
+                    cypher = new Gamma_code();
+                    crypter = GammaKeyCrypt;
+                    break;
+                case 3:
+                    cypher = new Gamma_code();
+                    crypter = GammaNoteCrypt;
+                    break;
                 default:
                     break;
             }
@@ -322,6 +443,33 @@ namespace Crypto_1_Cezar
                 item.Visibility = Visibility.Collapsed;
             }
             inputPanels[ind].Visibility = Visibility.Visible;
+        }
+
+        private void OpenNote_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)openDialogNote.ShowDialog())
+            {
+                using (StreamReader sr = new StreamReader(openDialogNote.FileName))
+                {
+                        noteKeyText = sr.ReadToEnd();
+                }
+                if (noteKeyText.Length <= 0)
+                {
+                    MessageBox.Show("File is empty!");
+                    return;
+                }
+                GammaNoteBox.Text = openDialogNote.FileName;
+                updateFieldsAsync();
+            }
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if(GenerateCheckBox.IsChecked == true)
+                GammaKeyBox.IsReadOnly = true;
+            else
+                GammaKeyBox.IsReadOnly = false;
+            Crypt(lastActEncript);
         }
     }
 }

@@ -131,11 +131,9 @@ namespace Crypto_1_Cezar
                 length = alfabetUa.Length;
             for (int i = 1; i < length; i++)
             {
-                int currentVerbs = 0;
                 string curr = Decrypt(input, new string[] { i.ToString() }, lang);
-                foreach (var item in curr.Split())
-                    if (BinarySearch(dict, item.ToUpper(), 0, dict.Length) == 0)
-                        currentVerbs++;
+                int currentVerbs = CheckVerbs(dict,curr);
+                
                 if (currentVerbs > maxVerbs)
                 {
                     maxVerbs = currentVerbs;
@@ -147,15 +145,15 @@ namespace Crypto_1_Cezar
         }
 
 
-        public override int HackByFreguency(string input, int lang)
+        public override string HackByFreguency(string input, int lang)
         {
             if (input.Length == 0)
-                return 0;// повертаю нульовий ключ
+                return "0";// повертаю нульовий ключ
             char toCompare = ' ';
             char mostCommon = MostCommonSymbol(input);
 
             if (lang == 0)// 65581 element alfabet
-                return (int)mostCommon - (int)toCompare;
+                return ((int)mostCommon - (int)toCompare).ToString();
 
             string alfabet;
             if (lang == 1)// english
@@ -164,7 +162,7 @@ namespace Crypto_1_Cezar
             else if (lang == 2)// ukrainian
                 alfabet = alfabetUa;
             else
-                return 0;
+                return "0";
 
             if (alfabetEn.Contains(mostCommon) && alfabetEn.Contains(toCompare))
             {
@@ -172,10 +170,10 @@ namespace Crypto_1_Cezar
                 res = res % alfabet.Length;
                 if (res < 0)
                     res = alfabet.Length + res;
-                return res;
+                return res.ToString();
             }
             else
-                return 0;
+                return "0";
         }
 
         public override bool IsValidKey(string[] keys)
@@ -184,6 +182,11 @@ namespace Crypto_1_Cezar
                 return false;
             else 
                 return int.TryParse(keys[0], out int a);
+        }
+
+        public override void HuckByEnDePair(string encrypted, string decripted, ref string[] args, int lang)
+        {
+            throw new NotImplementedException();
         }
     }
 }

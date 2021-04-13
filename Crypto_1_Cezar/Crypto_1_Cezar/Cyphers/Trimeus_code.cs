@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace Crypto_1_Cezar
 {
@@ -205,9 +202,51 @@ namespace Crypto_1_Cezar
             return result;
         }
 
-        public override int HackByFreguency(string input, int lang)
+        public override string HackByFreguency(string input, int lang)
         {
-            throw new NotImplementedException();
+            char toCompare = ' ';
+            string[] dict;
+            string bestKey = string.Empty;
+            int bestSp = 0;
+            using (StreamReader sr = new StreamReader(@"D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\Dicshinary.txt"))
+            {
+                dict = sr.ReadToEnd().Split("\r\n");
+            }
+            string rez = string.Empty;
+            int len = 10;
+            if (len > input.Length)
+                len = input.Length;
+            for (int i = 1; i < len; i++)
+            {
+                string currKey = string.Empty;
+                for (int j = 0; j < i; j++)
+                {
+                    string currChars = string.Empty;
+                    for (int k = j; k < input.Length; k+=i)
+                    {
+                        currChars += input[k];
+                    }
+                    char mostCommon = MostCommonSymbol(currChars);
+                    if (alfabetEn.Contains(mostCommon) && alfabetEn.Contains(toCompare))
+                    {
+                        int res = alfabetEn.IndexOf(mostCommon) - alfabetEn.IndexOf(toCompare);
+                        
+                        res = res % alfabetEn.Length;
+                        if (res < 0)
+                            currKey += alfabetEn[alfabetEn.Length + res];
+                        else
+                            currKey += alfabetEn[res];
+                    }
+                    else
+                        return currKey += alfabetEn[0];
+                }
+                if (currKey.Length >= 2)
+                    currKey = currKey[currKey.Length - 1] + currKey.Substring(0, currKey.Length - 1);
+                bestKey += currKey + "\n";
+                //if (bestSp < CheckVerbs(dict, Decrypt(input, new string[] { currKey }, lang)))
+                //    bestKey = currKey;
+            }
+            return bestKey;
         }
 
         public override bool IsValidKey(string[] keys)
@@ -224,6 +263,75 @@ namespace Crypto_1_Cezar
             }
             else
                 return false;
+        }
+
+        public override void HuckByEnDePair(string encrypted, string decripted, ref string[] args, int lang)
+        {
+            if (encrypted.Length != decripted.Length)
+                throw new InvalidDataException();
+
+            if(args[0] == "0")
+            {
+                string ress = string.Empty;
+                for (int i = 0; i < encrypted.Length; i++)
+                {
+                    if (alfabetEn.Contains(encrypted[i]) && alfabetEn.Contains(decripted[i]))
+                    {
+                        int res = alfabetEn.IndexOf(encrypted[i]) - alfabetEn.IndexOf(decripted[i]);
+
+                        res = res % alfabetEn.Length;
+                        if (res < 0)
+                            ress += alfabetEn[alfabetEn.Length + res];
+                        else
+                            ress += alfabetEn[res];
+                    }
+                    else
+                        ress += alfabetEn[0];
+                    string curr = ress;
+                    if (ress.Length >= 2)
+                        curr = ress[ress.Length - 1] + ress.Substring(0, ress.Length - 1);
+                    
+                    if(Decrypt(encrypted, new string[] { curr }, lang) == decripted)
+                    {
+                        args = new string[] { curr };
+                        return;
+                    }
+                    
+                }
+                args = new string[] { ress };
+            }
+            else
+            {
+                int length;
+
+                if (lang == 0)
+                    length = lenOfDev;
+                else if (lang == 1)
+                    length = alfabetEn.Length;
+                else
+                    length = alfabetUa.Length;
+                for (int i = 1; i < length; i++)
+                    for (int j = 0; j < length; j++)
+                        for (int k = 0; k < length; k++)
+                        {
+                            string curr = Decrypt(encrypted, new string[] { k.ToString(), j.ToString(), i.ToString() }, lang);
+
+                            if (decripted == curr)
+                            {
+                                int[] bestKeys = new int[] { k, j, i };
+                                args = new string[bestKeys.Length];
+                                for (int l = 0; l < bestKeys.Length; l++)
+                                {
+                                    args[l] = bestKeys[l].ToString();
+                                }
+                                return;
+                            }
+                        }
+                args = new string[] { "0", "0", "0" };
+
+                
+            }
+               
         }
     }
 }
