@@ -39,7 +39,8 @@
         <Style TargetType="{x:Type ComboBoxItem}">
             <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
             <Setter Property="Background" Value="{StaticResource FieldBlackColor}"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
         </Style>
         <Style  TargetType="{x:Type ComboBox}">
             <Setter Property="Template">
@@ -156,11 +157,17 @@
                     <ComboBoxItem >
                         <TextBlock Text="Trimeus"/>
                     </ComboBoxItem>
-                    <ComboBoxItem IsSelected="True">
+                    <ComboBoxItem >
                         <TextBlock Text="Gamma Key"/>
                     </ComboBoxItem>
                     <ComboBoxItem>
                         <TextBlock Text="Gamma Note"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock Text="Vigener"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem IsSelected="True">
+                        <TextBlock Text="RSA"/>
                     </ComboBoxItem>
 
                 </ComboBox>
@@ -256,7 +263,8 @@
                 </StackPanel>
                 <StackPanel 
                     x:Name="GammaKeyInputKey"
-                    Orientation="Horizontal">
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
 
                     <TextBlock 
                     Text="Key"
@@ -310,7 +318,69 @@
                     Margin="5,0,0,0" Click="OpenNote_Click"
                     />
                 </StackPanel>
+                <StackPanel 
+                    x:Name="VigerInputKey"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
 
+                    <TextBlock 
+                    Text="Key"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="VigerKeyBox"
+                    Text="Some Key"
+                    FontSize="25"
+                    Width="270"
+                    TextAlignment="Left"
+                    TextChanged="ChangeLangEvent"/>
+                </StackPanel>
+                <StackPanel 
+                    x:Name="RSAInputKey"
+                    Orientation="Horizontal">
+
+                    <TextBlock 
+                    Text="n"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="rsa_n"
+                    Text=""
+                    FontSize="25"
+                    Width="90"
+                    TextAlignment="Left"
+                    TextChanged="ChangeLangEvent"/>
+                    <TextBlock 
+                    Text="e"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="rsa_e"
+                    Text=""
+                    FontSize="25"
+                    Width="90"
+                    TextAlignment="Left"
+                    TextChanged="ChangeLangEvent"/>
+                    <TextBlock 
+                    Text="d"
+                    FontSize="25"
+                    Margin="20,0,20,0"
+                    Foreground="{StaticResource TextColor}"
+                    />
+                    <TextBox 
+                    x:Name="rsa_d"
+                    Text=""
+                    FontSize="25"
+                    Width="90"
+                    TextAlignment="Left"
+                    TextChanged="ChangeLangEvent"/>
+                </StackPanel>
                 <Button
                     x:Name="EncryptButt"
                     Background="#8dd28a"

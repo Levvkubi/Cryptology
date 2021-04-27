@@ -36,6 +36,7 @@ namespace Crypto_1_Cezar
         string openedFile;
         string noteKeyText;
         List<StackPanel> inputPanels;
+        bool langChanged = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -45,6 +46,8 @@ namespace Crypto_1_Cezar
             inputPanels.Add(TrimeusInputKey);
             inputPanels.Add(GammaKeyInputKey);
             inputPanels.Add(GammaNoteInputKey);
+            inputPanels.Add(VigerInputKey);
+            inputPanels.Add(RSAInputKey);
 
             changeCrypt(SelectCrypt.SelectedIndex);
 
@@ -122,6 +125,8 @@ namespace Crypto_1_Cezar
 
             crypter(crypt);
             updateFieldsAsync();
+
+            langChanged = false;
         }
         private void CaesarsCrypt(Func<string, string[], int, string> crypt)
         {
@@ -164,13 +169,18 @@ namespace Crypto_1_Cezar
         }
         private void GammaKeyCrypt(Func<string, string[], int, string> crypt)
         {
-            if(GenerateCheckBox.IsChecked == true)
+            if (GenerateCheckBox.IsChecked == true)
             {
-                if (GammaKeyBox.Text.Length < input.Length)
+                Gamma_code gamma = (Gamma_code)cypher;
+
+                if (langChanged)
                 {
-                    Gamma_code gamma = (Gamma_code)cypher;
+                    langChanged = false;
                     GammaKeyBox.Text = gamma.GenerateKey(input.Length, getLangState());
-                }
+                }    
+                
+                while (GammaKeyBox.Text.Length < input.Length)
+                    GammaKeyBox.Text += gamma.GetRandChar(getLangState());
             }
             if(!cypher.IsValidKey(new string[] { GammaKeyBox.Text }))
             {
@@ -199,7 +209,48 @@ namespace Crypto_1_Cezar
                     getLangState()
                     );
         }
-
+        private void VigenerCrypt(Func<string, string[], int, string> crypt)
+        {
+            if (!cypher.IsValidKey(new string[] { VigerKeyBox.Text }))
+            {
+                MessageBox.Show("key is invalid");
+                return;
+            }
+            output = crypt(
+                    input,
+                    new string[] { VigerKeyBox.Text },
+                    getLangState()
+                    );
+        }
+        private void RsaCrypt(Func<string, string[], int, string> crypt)
+        {
+            if(lastActEncript)
+            {
+                if (!cypher.IsValidKey(new string[] { rsa_n.Text, rsa_e.Text }))
+                {
+                    MessageBox.Show("key is invalid");
+                    return;
+                }
+                output = crypt(
+                        input,
+                        new string[] { rsa_n.Text, rsa_e.Text },
+                        getLangState()
+                        );
+            }
+            else
+            {
+                if (!cypher.IsValidKey(new string[] { rsa_n.Text , rsa_d.Text }))
+                {
+                    MessageBox.Show("key is invalid");
+                    return;
+                }
+                output = crypt(
+                        input,
+                        new string[] { rsa_n.Text, rsa_d.Text },
+                        getLangState()
+                        );
+            }
+        }
         private void Swap_Click(object sender, RoutedEventArgs e)
         {
             string currText = input;
@@ -210,21 +261,20 @@ namespace Crypto_1_Cezar
 
             Crypt(lastActEncript);
         }
-
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             input = InputTextBox.Text;
             Crypt(lastActEncript);
             InputChastotTextBox.Text = cypher.GetFrequency(input);
         }
-
         private void OutputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             OutputChastotTextBox.Text = cypher.GetFrequency(output);
         }
-
         private void ChangeLangEvent(object sender, RoutedEventArgs e)
         {
+            if (sender.GetType() == typeof(RadioButton) || sender.GetType() == typeof(CheckBox))
+                langChanged = true;
             Crypt(lastActEncript);
         }
         private void BruetForseAuto(object sender, RoutedEventArgs e)
@@ -401,7 +451,6 @@ namespace Crypto_1_Cezar
         {
             MessageBox.Show("Developed by\nМАМИН ХАЦКЕР corp");
         }
-
         private void SelectCrypt_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             changeCrypt(SelectCrypt.SelectedIndex);
@@ -427,6 +476,14 @@ namespace Crypto_1_Cezar
                     cypher = new Gamma_code();
                     crypter = GammaNoteCrypt;
                     break;
+                case 4:
+                    cypher = new Vigener_code();
+                    crypter = VigenerCrypt;
+                    break;
+                case 5:
+                    cypher = new RSA_code();
+                    crypter = RsaCrypt;
+                    break;
                 default:
                     break;
             }
@@ -444,7 +501,6 @@ namespace Crypto_1_Cezar
             }
             inputPanels[ind].Visibility = Visibility.Visible;
         }
-
         private void OpenNote_Click(object sender, RoutedEventArgs e)
         {
             if ((bool)openDialogNote.ShowDialog())
@@ -460,9 +516,9 @@ namespace Crypto_1_Cezar
                 }
                 GammaNoteBox.Text = openDialogNote.FileName;
                 updateFieldsAsync();
+                Crypt(lastActEncript);
             }
         }
-
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             if(GenerateCheckBox.IsChecked == true)
