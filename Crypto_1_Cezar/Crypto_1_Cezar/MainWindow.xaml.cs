@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Crypto_1_Cezar.Cyphers;
+using System.Numerics;
 
 namespace Crypto_1_Cezar
 {
@@ -280,7 +281,15 @@ namespace Crypto_1_Cezar
         private void BruetForseAuto(object sender, RoutedEventArgs e)
         {
             string[] keys;
-            cypher.BroutForseAuto(input,out keys, getLangState());
+            try
+            {
+                cypher.BroutForseAuto(input,out keys, getLangState());
+            }
+            catch (NotImplementedException)
+            {
+                unrealizedMessege();
+                return;
+            }
             if(currCypher == 0)
                 KeyBox.Text = keys[0];
             else if(currCypher == 1)
@@ -311,12 +320,27 @@ namespace Crypto_1_Cezar
         }
         private void BruetForseManualy(object sender, RoutedEventArgs e)
         {
-            output = cypher.BroutForseManual(input, getLangState());
+            try
+            {
+                output = cypher.BroutForseManual(input, getLangState());
+            }
+            catch (NotImplementedException)
+            {
+                unrealizedMessege();
+            }
             updateFieldsAsync();
         }
         private void HackByFreguency(object sender, RoutedEventArgs e)//caesar 
         {
-            OutputTextBox.Text = cypher.HackByFreguency(input, getLangState()).ToString();
+            try
+            {
+                OutputTextBox.Text = cypher.HackByFreguency(input, getLangState()).ToString();
+            }
+            catch (NotImplementedException)
+            {
+                unrealizedMessege();
+                return;
+            }
             buttonClick(false);//імітується нажаття на кнопку розшифрувати для зміни стану в інтерфейсі
                                //і щоб в вихіднопу полі було розшифроване повідомлення
             if (currCypher == 1)
@@ -343,7 +367,14 @@ namespace Crypto_1_Cezar
             else
                 args = new string[] { "1" };
 
-            cypher.HuckByEnDePair(input, decrypted,ref args, getLangState());
+            try
+            {
+                cypher.HuckByEnDePair(input, decrypted,ref args, getLangState());
+            }
+            catch (NotImplementedException)
+            {
+                unrealizedMessege();
+            }
             if (usegaslo)
             {
                 AGasBox.Text = args[0];
@@ -526,6 +557,22 @@ namespace Crypto_1_Cezar
             else
                 GammaKeyBox.IsReadOnly = false;
             Crypt(lastActEncript);
+        }
+        private void unrealizedMessege()
+        {
+            MessageBox.Show("На даний момент ця функція не реалізована для цього алгоритму шифрування");
+        }
+        private void Create_Keys_Button_Click(object sender, RoutedEventArgs ev)
+        {
+            BigInteger n, e, d;
+
+            RSA_code.GenerateKeys(out n, out e, out d);
+
+            rsa_n.Text = n.ToString();
+            rsa_e.Text = e.ToString();
+            rsa_d.Text = d.ToString();
+
+            buttonClick(lastActEncript);
         }
     }
 }

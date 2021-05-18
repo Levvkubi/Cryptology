@@ -344,12 +344,12 @@
                     <TextBlock 
                     Text="n"
                     FontSize="25"
-                    Margin="20,0,20,0"
+                    Margin="10,0,10,0"
                     Foreground="{StaticResource TextColor}"
                     />
                     <TextBox 
                     x:Name="rsa_n"
-                    Text=""
+                    Text="9173503"
                     FontSize="25"
                     Width="90"
                     TextAlignment="Left"
@@ -357,12 +357,12 @@
                     <TextBlock 
                     Text="e"
                     FontSize="25"
-                    Margin="20,0,20,0"
+                    Margin="10,0,10,0"
                     Foreground="{StaticResource TextColor}"
                     />
                     <TextBox 
                     x:Name="rsa_e"
-                    Text=""
+                    Text="3"
                     FontSize="25"
                     Width="90"
                     TextAlignment="Left"
@@ -370,16 +370,24 @@
                     <TextBlock 
                     Text="d"
                     FontSize="25"
-                    Margin="20,0,20,0"
+                    Margin="10,0,10,0"
                     Foreground="{StaticResource TextColor}"
                     />
                     <TextBox 
                     x:Name="rsa_d"
-                    Text=""
+                    Text="6111579"
                     FontSize="25"
                     Width="90"
                     TextAlignment="Left"
                     TextChanged="ChangeLangEvent"/>
+                    <Button
+                    x:Name="GenerateButt"
+                    Content="Generate Keys"
+                    FontSize="12"
+                    Padding="10,0,10,0"
+                    Margin="10,0,0,0"
+                    Click="Create_Keys_Button_Click"
+                    />
                 </StackPanel>
                 <Button
                     x:Name="EncryptButt"
