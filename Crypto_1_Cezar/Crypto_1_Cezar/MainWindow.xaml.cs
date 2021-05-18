@@ -574,5 +574,11 @@ namespace Crypto_1_Cezar
 
             buttonClick(lastActEncript);
         }
+        private void DH_Click(object sender, RoutedEventArgs e)
+        {
+            DH_Ex dhWindow = new DH_Ex();
+            dhWindow.Show();
+            this.Close();
+        }
     }
 }

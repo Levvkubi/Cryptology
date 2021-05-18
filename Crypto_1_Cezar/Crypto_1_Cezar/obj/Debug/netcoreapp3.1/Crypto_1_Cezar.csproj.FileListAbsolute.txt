@@ -28,3 +28,5 @@ D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\ne
 D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\Crypto_1_Cezar.csproj.ResolveComReference.cache
 D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\InputWindow.g.cs
 D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\InputWindow.baml
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\DH_Ex.g.cs
+D:\Programming\С#\3Curs_2\Cruptology\Crypto_1_Cezar\Crypto_1_Cezar\obj\Debug\netcoreapp3.1\DH_Ex.baml

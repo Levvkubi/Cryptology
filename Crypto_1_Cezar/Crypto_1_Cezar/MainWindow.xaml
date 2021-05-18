@@ -171,7 +171,12 @@
                     </ComboBoxItem>
 
                 </ComboBox>
-                
+                <MenuItem
+                    Header="DH algorithm"
+                    Click="DH_Click"
+                    Style="{StaticResource DefoltMenuItem}"
+                    Background="{StaticResource MainBlackColor}"/>
+                    
                 <MenuItem
                         Header="About Me" 
                         Click="InfoAbout"
