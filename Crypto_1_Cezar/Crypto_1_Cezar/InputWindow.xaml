@@ -1,0 +1,29 @@
+﻿<Window x:Class="Crypto_1_Cezar.InputWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Crypto_1_Cezar"
+        mc:Ignorable="d"
+        Title="InputWindow" Height="200" Width="500"
+        Background="#2d2d30">
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <TextBox x:Name="DecryptBox" 
+                Width="370"
+                     Margin="15"
+                     Background="#1e1e1e"
+                     Foreground="#e6e6e6"/>
+            <StackPanel>
+                <CheckBox x:Name="UseGaslo"
+                    Content="Use Gaslo"
+                    IsChecked="True"
+                    Margin="0,30"
+                    Foreground="#e6e6e6"/>
+                <Button x:Name="okButt"
+                    Content="Ok"
+                        Margin="10,0" Click="okButt_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
