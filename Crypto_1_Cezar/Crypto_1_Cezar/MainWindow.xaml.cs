@@ -27,7 +27,6 @@ namespace Crypto_1_Cezar
         int currCypher;
         //змінна зберігає чи зашифрувати зараз текст чи дешефрувати (якщо true зашифрувати), можливо не найкраще рішення використовувати bool
         bool lastActEncript = true;
-        bool useGaslo = false;// для шифру тримеуса
         Action<Func<string, string[], int, string>> crypter;
         System.Windows.Media.Brush defoltButtColor;
         System.Windows.Media.Brush activeButtColor;

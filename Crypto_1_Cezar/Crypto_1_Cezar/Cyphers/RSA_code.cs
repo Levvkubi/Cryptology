@@ -83,7 +83,7 @@ namespace Crypto_1_Cezar.Cyphers
 
         private static BigInteger Calculate_e(BigInteger fn)
         {
-            BigInteger e = 10;
+            BigInteger e = 7;
 
             while (!IsCoprime(fn, e))
             {
@@ -147,9 +147,10 @@ namespace Crypto_1_Cezar.Cyphers
             {
                 dict = sr.ReadToEnd().Split("\r\n");
             }
-            p = new BigInteger(long.Parse(dict[random.Next(dict.Length)]));
-            q = new BigInteger(long.Parse(dict[random.Next(dict.Length)]));
-
+            //p = new BigInteger(long.Parse(dict[random.Next(dict.Length)]));
+            //q = new BigInteger(long.Parse(dict[random.Next(dict.Length)]));
+            p = 17;
+            q = 11;
             if (IsTheNumberSimple(p) && IsTheNumberSimple(q))
             {
                 n = p * q;
